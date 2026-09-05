@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রক্তদান প্ল্যাটফর্ম</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #e63946; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #e63946; color: white; font-weight: bold; cursor: pointer; border: none; }
+        button:hover { background-color: #d62828; }
+        .donor-card { background: #fff0f1; border-left: 4px solid #e63946; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>রক্তদাতা রেজিষ্ট্রেশন</h2>
+    <input type="text" id="name" placeholder="আপনার নাম">
+    <input type="email" id="email" placeholder="আপনার জিমেইল (Gmail)">
+    <input type="tel" id="phone" placeholder="ফোন নম্বর / হোয়াটসঅ্যাপ">
+    <select id="bloodGroup">
+        <option value="">রক্তের গ্রুপ নির্বাচন করুন</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+    </select>
+    <button onclick="addDonor()">রেজিস্ট্রেশন করুন</button>
+
+    <hr style="margin: 20px 0;">
+
+    <h2>রক্তের গ্রুপ খুঁজুন</h2>
+    <select id="searchGroup" onchange="filterDonors()">
+        <option value="">সকল গ্রুপ</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+    </select>
+
+    <div id="donorList"></div>
+</div>
+
+<script>
+    let donors = [];
+
+    function addDonor() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const bloodGroup = document.getElementById('bloodGroup').value;
+
+        if (!name || !email || !phone || !bloodGroup) {
+            alert('সবগুলো ঘর পূরণ করুন!');
+            return;
+        }
+
+        const donor = { name, email, phone, bloodGroup };
+        donors.push(donor);
+        
+        alert('রেজিস্ট্রেশন সফল হয়েছে!');
+        clearInputs();
+        displayDonors(donors);
+    }
+
+    function clearInputs() {
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('bloodGroup').value = '';
+    }
+
+    function displayDonors(list) {
+        const donorListDiv = document.getElementById('donorList');
+        donorListDiv.innerHTML = '';
+
+        if(list.length === 0) {
+            donorListDiv.innerHTML = '<p>কোনো রক্তদাতা পাওয়া যায়নি।</p>';
+            return;
+        }
+
+        list.forEach(donor => {
+            const card = document.createElement('div');
+            card.className = 'donor-card';
+            card.innerHTML = `
+                <h3>${donor.name} (গ্রুপ: <span style="color:#e63946">${donor.bloodGroup}</span>)</h3>
+                <p>ইমেইল: ${donor.email}</p>
+                <p>ফোন: ${donor.phone}</p>
+                <a href="https://wa.me/${donor.phone}" target="_blank">
+                    <button style="width: auto; padding: 5px 15px;">যোগাযোগ / নক দিন</button>
+                </a>
+            `;
+            donorListDiv.appendChild(card);
+        });
+    }
+
+    function filterDonors() {
+        const selectedGroup = document.getElementById('searchGroup').value;
+        if (selectedGroup === '') {
+            displayDonors(donors);
+        } else {
+            const filtered = donors.filter(d => d.bloodGroup === selectedGroup);
+            displayDonors(filtered);
+        }
+    }
+</script>
+
+</body>
+</html>
